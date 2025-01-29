@@ -5,6 +5,8 @@ public class NovaQueue {
 	
 	public static HashMap<String, int[]> rideInfo = new HashMap<String,int[]>();
 	
+	public static HashMap<String, String> rideName = new HashMap<String,String>();
+	
 	//rideType.put("WW",RIDETYPE.WATER);
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -47,6 +49,14 @@ public class NovaQueue {
 		rideInfo.put("MR", new int[] {40, 24});
 		rideInfo.put("CC", new int[] {180, 50});
 		rideInfo.put("MC", new int[] {45, 20});
+		
+		rideName.put("WW", "Wildcat Waterfall");
+		rideName.put("RR", "Roarin' Racer");
+		rideName.put("HL", "Haunted Lab");
+		rideName.put("MR", "Mine Ride");
+		rideName.put("CC", "Cats Carousel");
+		rideName.put("MC", "Mini Cat");
+		
 		
 	}
 	
