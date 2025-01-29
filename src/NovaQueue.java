@@ -25,6 +25,22 @@ public class NovaQueue {
 			int peopleinline=scann.nextInt();
 			
 			scann.nextLine();
+			int pwt = (rideInfo.get(rideid)[0] / rideInfo.get(rideid)[1] * 60) * peopleinline;
+			String statusLabel = "";
+			
+			int tolerance = rideType.get(rideid).getValue();
+			if(pwt < 0.5 * tolerance) {
+				statusLabel = "Below Normal";
+			} 
+			if(pwt <= tolerance) {
+				statusLabel = "Normal";
+			}
+			if(pwt > tolerance) {
+				statusLabel = "Above Normal";
+			}
+			if(pwt > 2 * tolerance ) {
+				statusLabel = "Alert";
+			}
 			System.out.println(rideid+" has "+peopleinline+" people in line and the wait time is 10 minutes ");
 		}
 		
