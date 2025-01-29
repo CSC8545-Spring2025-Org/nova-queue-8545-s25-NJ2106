@@ -17,15 +17,30 @@ public class NovaQueue {
 		
 		
 		while(true) {
+			
 			System.out.println("Enter the ride id:");
 			String rideid=scann.nextLine();
 			
 			if(rideid.equals( "STOP")) break;
+			if(!rideType.containsKey(rideid)) {
+				System.out.println("No ride exists for ride id - "+ rideid);
+				continue;
+			}
 			System.out.println("Enter number of people currently in line: ");
-			int peopleinline=scann.nextInt();
+			int peopleinline = 0;
+			if(scann.hasNextInt()) {
+				peopleinline = scann.nextInt();
+			}else {
+				System.out.println("Invalid count for people in lineM");
+				scann.nextLine();
+				continue;
+			}
 			
 			scann.nextLine();
-			int pwt = (rideInfo.get(rideid)[0] / rideInfo.get(rideid)[1] * 60) * peopleinline;
+			
+			
+			double pwt = ((rideInfo.get(rideid)[0] / rideInfo.get(rideid)[1]) * peopleinline) / 60.0;
+			
 			String statusLabel = "";
 			
 			int tolerance = rideType.get(rideid).getValue();
@@ -41,7 +56,8 @@ public class NovaQueue {
 			if(pwt > 2 * tolerance ) {
 				statusLabel = "Alert";
 			}
-			System.out.println(rideid+" has "+peopleinline+" people in line and the wait time is 10 minutes ");
+			
+			System.out.println(rideName.get(rideid)+" has "+peopleinline+" people in line and the wait time is "+ String.format("%.2f", pwt) + " minutes - "+statusLabel);
 		}
 		
 		System.out.println("Thanks for using NovaQueue");
