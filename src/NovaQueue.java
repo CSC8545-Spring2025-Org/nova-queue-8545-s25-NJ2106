@@ -1,19 +1,70 @@
 import java.util.*;
 public class NovaQueue {
 
+	public static HashMap<String, RIDETYPE> rideType = new HashMap<String,RIDETYPE>();
+	
+	public static HashMap<String, int[]> rideInfo = new HashMap<String,int[]>();
+	
+	//rideType.put("WW",RIDETYPE.WATER);
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Scanner scann=new Scanner(System.in);
+		LoadInMemoryDB();
 		System.out.println("Welcome to NovaQueue");
+		Scanner scann=new Scanner(System.in);
 		
-		System.out.println("Enter the ride id:");
-		String rideid=scann.nextLine();
 		
-		System.out.println("Enter number of people currently in line: ");
-		int peopleinline=scann.nextInt();
 		
-		System.out.println(rideid+" has "+peopleinline+" people in line and the wait time is 10 minutes ");
+		while(true) {
+			System.out.println("Enter the ride id:");
+			String rideid=scann.nextLine();
+			
+			if(rideid.equals( "STOP")) break;
+			System.out.println("Enter number of people currently in line: ");
+			int peopleinline=scann.nextInt();
+			
+			scann.nextLine();
+			System.out.println(rideid+" has "+peopleinline+" people in line and the wait time is 10 minutes ");
+		}
+		
+		System.out.println("Thanks for using NovaQueue");
+		
+		
 
+	}
+	
+	public static void LoadInMemoryDB() {
+		
+		rideType.put("WW",RIDETYPE.WATER);
+		rideType.put("RR", RIDETYPE.COASTER);
+		rideType.put("HL", RIDETYPE.THRILL);
+		rideType.put("MR", RIDETYPE.GENERAL);
+		rideType.put("CC", RIDETYPE.GENERAL);
+		rideType.put("MC", RIDETYPE.KIDDIE);
+		
+		rideInfo.put("WW", new int[] {60, 6});
+		rideInfo.put("RR", new int[] {90, 48});
+		rideInfo.put("HL", new int[] {30, 12});
+		rideInfo.put("MR", new int[] {40, 24});
+		rideInfo.put("CC", new int[] {180, 50});
+		rideInfo.put("MC", new int[] {45, 20});
+		
+	}
+	
+	public enum RIDETYPE{
+		GENERAL(20),
+		COASTER(60),
+		KIDDIE(10),
+		WATER(25),
+		THRILL(45);
+				
+		private final int value;
+	    private RIDETYPE(int value) {
+	        this.value = value;
+	    }
+	    
+	    public int getValue() {
+	        return value;
+	    }
 	}
 
 }
