@@ -7,7 +7,6 @@ public class NovaQueue {
 	
 	public static HashMap<String, String> rideName = new HashMap<String,String>();
 	
-	//rideType.put("WW",RIDETYPE.WATER);
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		LoadInMemoryDB();
@@ -31,7 +30,7 @@ public class NovaQueue {
 			if(scann.hasNextInt()) {
 				peopleinline = scann.nextInt();
 			}else {
-				System.out.println("Invalid count for people in lineM");
+				System.out.println("Invalid count for people in line");
 				scann.nextLine();
 				continue;
 			}
