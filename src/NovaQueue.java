@@ -19,8 +19,9 @@ public class NovaQueue {
             System.out.println("Enter the ride id:");
             String rideid = scann.nextLine();
 
-            if (rideid.equals("STOP"))
+            if ("STOP".equals(rideid)) {
                 break;
+            }
             if (!rideType.containsKey(rideid)) {
                 System.out.println("No ride exists for ride id - " + rideid);
                 continue;
