@@ -2,7 +2,7 @@ import java.util.*;
 
 public class NovaQueue {
 
-    public static HashMap<String, RIDETYPE> rideType = new HashMap<String, RIDETYPE>();
+    public static HashMap<String, RideType> rideType = new HashMap<>();
 
     public static HashMap<String, int[]> rideInfo = new HashMap<String, int[]>();
 
@@ -10,69 +10,174 @@ public class NovaQueue {
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
-        LoadInMemoryDB();
         System.out.println("Welcome to NovaQueue");
-        Scanner scann = new Scanner(System.in);
-
-        while (true) {
-
-            System.out.println("Enter the ride id:");
-            String rideid = scann.nextLine();
-
-            if ("STOP".equals(rideid)) {
-                break;
-            }
-            if (!rideType.containsKey(rideid)) {
-                System.out.println("No ride exists for ride id - " + rideid);
-                continue;
-            }
-            System.out.println("Enter number of people currently in line: ");
-            int peopleinline = 0;
-            if (scann.hasNextInt()) {
-                peopleinline = scann.nextInt();
-            }
-            else {
-                System.out.println("Invalid count for people in line");
-                scann.nextLine();
-                continue;
-            }
-
-            scann.nextLine();
-
-            double pwt = ((rideInfo.get(rideid)[0] / rideInfo.get(rideid)[1]) * peopleinline) / 60.0;
-
-            String statusLabel = "";
-
-            int tolerance = rideType.get(rideid).getValue();
-            if (pwt < 0.5 * tolerance) {
-                statusLabel = "Below Normal";
-            }
-            if (pwt <= tolerance) {
-                statusLabel = "Normal";
-            }
-            if (pwt > tolerance) {
-                statusLabel = "Above Normal";
-            }
-            if (pwt > 2 * tolerance) {
-                statusLabel = "Alert";
-            }
-
-            System.out.println(rideName.get(rideid) + " has " + peopleinline + " people in line and the wait time is "
-                    + String.format("%.2f", pwt) + " minutes - " + statusLabel);
+        
+       
+        if(args.length == 0) {
+            
+            ConsoleMode();
         }
+        String input = args[0].toLowerCase();
+        switch(input) {
+            case "console":
+                
+                ConsoleMode();
+                break;
+            case "batch":
+                BatchMode();
+                break;
+            default:
+                System.out.println("Invalid Input. The input should be either console or batch");
+        }
+        ClearInMemoryDB();
+        
+       }
+    
+    private static void BatchMode() {
+        // TODO Auto-generated method stub
+        System.out.println("Batch Mode started");
+        CsvDataReader csvread = new CsvDataReader();
+        List<Ride> rideData = csvread.readRideData();
+        HashMap<String, Integer> lineData = csvread.readLineData();
+        LoadInMemoryDBForBatchMode(rideData);
+        List<WaitTimeOutput> result = new ArrayList<>();
+        for(int i = 0 ; i  < rideData.size(); i ++) {
+            
+            String rideId = rideData.get(i).getId();
+            int peopleInLine =  lineData.get(rideId);
+            double waitTime = CalculateWaitTime(rideId, peopleInLine);
+            int tolerance = GetTolerance(rideId);
+            String statusLabel = GetStatusString(tolerance, waitTime); 
+            WaitTimeOutput output = new WaitTimeOutput(rideId, peopleInLine, waitTime,statusLabel );
+            result.add(output);
+        }
+        CsvDataWriter writer = new CsvDataWriter();
+        writer.writePredictionData(result);
+    }
+    
+    public static void WriteToCsvFile(){
+        
+    }
 
-        System.out.println("Thanks for using NovaQueue");
+    public static void ConsoleMode() {
+        LoadInMemoryDB();
+        System.out.println("Console Mode started");
+        String rideid = "";
+        int peopleinline = 0;
+        boolean validInput = false;
+        while(true) {
+            
+            Scanner scann = new Scanner(System.in);
+            while (true) {
+                
+                System.out.println("Enter the ride id:");
+                rideid = scann.nextLine();
+    
+                if ("STOP".equals(rideid)) {
+                    System.out.println("Thanks for using NovaQueue");
+                    System.exit(0);
+                }
+                if (!rideType.containsKey(rideid)) {
+                    System.out.println("No ride exists for ride id - " + rideid);
+                    continue;
+                }else {
+                    break;
+                }
+            }
+            while(!validInput) {
+                System.out.println("Enter number of people currently in line: ");
+                
+                if(scann.hasNextInt()) {
+                    peopleinline = scann.nextInt();
+                    if(peopleinline < 0 || peopleinline > 5000) {
+                        System.out.println("Enter Valid Input between 0 and 5000");
+                        
+                    }else {
+                       
+                       validInput = true;
+                    }
+                }else {
+                    System.out.println("Invalid input");
+                    scann.next();
+                }
+                
+    
+                
+            }
+                
+                double waitingTime = CalculateWaitTime(rideid, peopleinline);
+                int tolerance =  GetTolerance(rideid);
+                String statusLabel = GetStatusString(tolerance, waitingTime);
+                
+    
+                System.out.println(rideName.get(rideid) + " has " + peopleinline + " people in line and the wait time is "
+                        + String.format("%.2f", waitingTime) + " minutes - " + statusLabel);
+                
+                validInput = false;
+                
+        }
+    }
+    
+    public static int GetTolerance(String rideId) {
+        return (int) (rideType.get(rideId).waitTimeTolerance.getSeconds() / 60);
+    }
+    
+    public static double CalculateWaitTime(String rideId, int peopleInLine) {
+        double dispatchTimeInMinutes = rideInfo.get(rideId)[0] / 60.0;
+        //System.out.print("dispatchTimeInMinutes - " + dispatchTimeInMinutes);
+        int ridersPerDispatch = rideInfo.get(rideId)[1];
+        //System.out.print("ridersPerDispatch - " + ridersPerDispatch);
+        double pwt =  Math.round((dispatchTimeInMinutes / ridersPerDispatch) * peopleInLine * 10.0) / 10.0;
+        //System.out.print("pwt - " + pwt);
+       return pwt;
+    }
+    
+    public static String GetStatusString(int tolerance, double pwt) {
+        String statusLabel = "";
+        
+        if (pwt <= tolerance) {
+            statusLabel = "Normal";
+        }
+        if (pwt < 0.5 * tolerance) {
+            statusLabel = "Below Normal";
+        }
+        
+        if (pwt > tolerance) {
+            statusLabel = "Above Normal";
+        }
+        if (pwt > 2 * tolerance) {
+            statusLabel = "Alert";
+        }
+        return statusLabel;
+    }
 
+        
+
+    public static void ClearInMemoryDB() {
+        rideType.clear();
+        rideInfo.clear();
+        rideName.clear();
+    }
+    
+    public static void LoadInMemoryDBForBatchMode(List<Ride> rideData) {
+        for(int i = 0 ; i < rideData.size(); i++) {
+            Ride r = rideData.get(i);
+            if(!rideType.containsKey(r.getId())) {
+                rideType.put(r.getId(), r.getRideType());
+                rideInfo.put(r.getId(), new int[] {(int) r.getDispatchTime(), (int) r.getRidersPerDispatch()});
+                rideName.put(r.getId(), r.getName());
+            }
+        }
     }
 
     public static void LoadInMemoryDB() {
 
-        rideType.put("WW", RIDETYPE.WATER);
-        rideType.put("RR", RIDETYPE.COASTER);
-        rideType.put("HL", RIDETYPE.THRILL);
-        rideType.put("MR", RIDETYPE.GENERAL);
-        rideType.put("CC", RIDETYPE.GENERAL);
-        rideType.put("MC", RIDETYPE.KIDDIE);
+        rideType.put("WW", RideType.WATER);
+        rideType.put("RR", RideType.COASTER);
+        rideType.put("HL", RideType.THRILL);
+        rideType.put("MR", RideType.GENERAL);
+        rideType.put("CC", RideType.GENERAL);
+        rideType.put("MC", RideType.KIDDIE);
 
         rideInfo.put("WW", new int[] { 60, 6 });
         rideInfo.put("RR", new int[] { 90, 48 });

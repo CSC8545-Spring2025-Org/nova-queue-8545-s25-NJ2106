@@ -1,0 +1,7 @@
+﻿rideId,rideName,rideType,dispatchTimeInSeconds,ridersPerDispatch
+WW,Wildcat Waterfall,WATER,60,6
+RR,Roarin' Racer,COASTER,90,48
+HL,Haunted Lab,THRILL,30,12
+MR,Mine Ride,GENERAL,40,24
+CC,Cats Carousel,GENERAL,180,50
+MC,Mini Cat,KIDDIE,45,20
