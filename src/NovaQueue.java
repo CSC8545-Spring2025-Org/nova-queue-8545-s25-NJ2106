@@ -55,10 +55,6 @@ public class NovaQueue {
         writer.writePredictionData(result);
     }
     
-    public static void WriteToCsvFile(){
-        
-    }
-
     public static void ConsoleMode() {
         LoadInMemoryDB();
         System.out.println("Console Mode started");
@@ -101,8 +97,6 @@ public class NovaQueue {
                     scann.next();
                 }
                 
-    
-                
             }
                 
                 double waitingTime = CalculateWaitTime(rideid, peopleinline);
@@ -124,11 +118,11 @@ public class NovaQueue {
     
     public static double CalculateWaitTime(String rideId, int peopleInLine) {
         double dispatchTimeInMinutes = rideInfo.get(rideId)[0] / 60.0;
-        //System.out.print("dispatchTimeInMinutes - " + dispatchTimeInMinutes);
+        
         int ridersPerDispatch = rideInfo.get(rideId)[1];
-        //System.out.print("ridersPerDispatch - " + ridersPerDispatch);
+        
         double pwt =  Math.round((dispatchTimeInMinutes / ridersPerDispatch) * peopleInLine * 10.0) / 10.0;
-        //System.out.print("pwt - " + pwt);
+        
        return pwt;
     }
     
