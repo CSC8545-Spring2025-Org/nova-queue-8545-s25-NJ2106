@@ -20,11 +20,15 @@ import org.apache.commons.io.input.BOMInputStream;
  */
 public class CsvDataReader {
 
-    //doesn't follow enum naming convention for convenience when using commons-csv
-    private enum RideDataHeaders {rideId, rideName, rideType, dispatchTimeInSeconds, ridersPerDispatch};
-    
-    private enum LineDataHeaders {rideId, peopleInLineCurrently };
-    
+    // doesn't follow enum naming convention for convenience when using commons-csv
+    private enum RideDataHeaders {
+        rideId, rideName, rideType, dispatchTimeInSeconds, ridersPerDispatch
+    };
+
+    private enum LineDataHeaders {
+        rideId, peopleInLineCurrently
+    };
+
     public static void main(String[] args) {
         CsvDataReader loader = new CsvDataReader();
         loader.readRideData();
@@ -36,32 +40,28 @@ public class CsvDataReader {
         CSVParser csvParser = null;
         List<Ride> result = new ArrayList<>();
         try {
-            
-            bomInputStream = BOMInputStream.builder()
-                    .setPath(Paths.get("src/resources/ride-data.csv"))
-                    .setByteOrderMarks(ByteOrderMark.UTF_8)
-                    .setInclude(false)  //ignore BOM from Excel-generated CSV
+
+            bomInputStream = BOMInputStream.builder().setPath(Paths.get("src/resources/ride-data.csv"))
+                    .setByteOrderMarks(ByteOrderMark.UTF_8).setInclude(false) // ignore BOM from Excel-generated CSV
                     .get();
-            
+
             reader = new InputStreamReader(bomInputStream);
-            
-            CSVFormat csvFormat = CSVFormat.Builder.create(CSVFormat.EXCEL)
-                    .setSkipHeaderRecord(true) 
-                    .setHeader(RideDataHeaders.class)
-                    .build();
+
+            CSVFormat csvFormat = CSVFormat.Builder.create(CSVFormat.EXCEL).setSkipHeaderRecord(true)
+                    .setHeader(RideDataHeaders.class).build();
             csvParser = new CSVParser(reader, csvFormat);
-            
+
             for (CSVRecord record : csvParser) {
                 Ride ride = new Ride();
                 ride.setId(record.get(RideDataHeaders.rideId));
                 ride.setName(record.get(RideDataHeaders.rideName));
                 ride.setRideType(RideType.valueOf(record.get(RideDataHeaders.rideType)));
-                //tip: you'll need to format the time to appear in rounded minutes in your project
-                ride.setDispatchTime(Long.valueOf(record.get(RideDataHeaders.dispatchTimeInSeconds))); 
-                ride.setRidersPerDispatch(Long.valueOf(record.get(RideDataHeaders.ridersPerDispatch)));  
+                // tip: you'll need to format the time to appear in rounded minutes in your project
+                ride.setDispatchTime(Long.valueOf(record.get(RideDataHeaders.dispatchTimeInSeconds)));
+                ride.setRidersPerDispatch(Long.valueOf(record.get(RideDataHeaders.ridersPerDispatch)));
                 System.out.println(ride);
                 result.add(ride);
-                 
+
             }
         }
         catch (IOException e) {
@@ -81,63 +81,60 @@ public class CsvDataReader {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-           
+
         }
         return result;
     }
-    
-    public HashMap<String, Integer> readLineData(){
-       
-            BOMInputStream bomInputStream = null;
-            Reader reader = null;
-            CSVParser csvParser = null;
-           HashMap<String, Integer> map = new HashMap<>();
+
+    public HashMap<String, Integer> readLineData() {
+
+        BOMInputStream bomInputStream = null;
+        Reader reader = null;
+        CSVParser csvParser = null;
+        HashMap<String, Integer> map = new HashMap<>();
+        try {
+
+            bomInputStream = BOMInputStream.builder().setPath(Paths.get("src/resources/line-data.csv"))
+                    .setByteOrderMarks(ByteOrderMark.UTF_8).setInclude(false) // ignore BOM from Excel-generated CSV
+                    .get();
+
+            reader = new InputStreamReader(bomInputStream);
+
+            CSVFormat csvFormat = CSVFormat.Builder.create(CSVFormat.EXCEL).setSkipHeaderRecord(true)
+                    .setHeader(LineDataHeaders.class).build();
+            csvParser = new CSVParser(reader, csvFormat);
+
+            for (CSVRecord record : csvParser) {
+                System.out.println(record.get(LineDataHeaders.rideId));
+                System.out.println(record.get(LineDataHeaders.peopleInLineCurrently));
+                // Line line = new Line(record.get(LineDataHeaders.rideId),
+                // Integer.parseInt(record.get(LineDataHeaders.peopleInLineCurrently)));
+                if (!map.containsKey(record.get(LineDataHeaders.rideId))) {
+                    map.put(record.get(LineDataHeaders.rideId),
+                            Integer.parseInt(record.get(LineDataHeaders.peopleInLineCurrently)));
+                }
+
+            }
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        finally {
             try {
-                
-                bomInputStream = BOMInputStream.builder()
-                        .setPath(Paths.get("src/resources/line-data.csv"))
-                        .setByteOrderMarks(ByteOrderMark.UTF_8)
-                        .setInclude(false)  //ignore BOM from Excel-generated CSV
-                        .get();
-                
-                reader = new InputStreamReader(bomInputStream);
-                
-                CSVFormat csvFormat = CSVFormat.Builder.create(CSVFormat.EXCEL)
-                        .setSkipHeaderRecord(true) 
-                        .setHeader(LineDataHeaders.class)
-                        .build();
-                csvParser = new CSVParser(reader, csvFormat);
-                
-                for (CSVRecord record : csvParser) {
-                    System.out.println(record.get(LineDataHeaders.rideId));
-                    System.out.println(record.get(LineDataHeaders.peopleInLineCurrently));
-                    //Line line = new Line(record.get(LineDataHeaders.rideId), Integer.parseInt(record.get(LineDataHeaders.peopleInLineCurrently)));
-                    if(!map.containsKey(record.get(LineDataHeaders.rideId))) {
-                        map.put(record.get(LineDataHeaders.rideId), Integer.parseInt(record.get(LineDataHeaders.peopleInLineCurrently)));
-                    }
-                    
-                     
+                if (csvParser != null) {
+                    csvParser.close();
+                }
+                if (reader != null) {
+                    reader.close();
                 }
             }
             catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            finally {
-                try {
-                    if (csvParser != null) {
-                        csvParser.close();
-                    }
-                    if (reader != null) {
-                        reader.close();
-                    }
-                }
-                catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-               
-            }
-            return map;
+
         }
+        return map;
     }
+}

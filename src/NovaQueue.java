@@ -11,16 +11,15 @@ public class NovaQueue {
     public static void main(String[] args) {
         // TODO Auto-generated method stub
         System.out.println("Welcome to NovaQueue");
-        
-       
-        if(args.length == 0) {
-            
+
+        if (args.length == 0) {
+
             ConsoleMode();
         }
         String input = args[0].toLowerCase();
-        switch(input) {
+        switch (input) {
             case "console":
-                
+
                 ConsoleMode();
                 break;
             case "batch":
@@ -30,9 +29,9 @@ public class NovaQueue {
                 System.out.println("Invalid Input. The input should be either console or batch");
         }
         ClearInMemoryDB();
-        
-       }
-    
+
+    }
+
     private static void BatchMode() {
         // TODO Auto-generated method stub
         System.out.println("Batch Mode started");
@@ -41,34 +40,34 @@ public class NovaQueue {
         HashMap<String, Integer> lineData = csvread.readLineData();
         LoadInMemoryDBForBatchMode(rideData);
         List<WaitTimeOutput> result = new ArrayList<>();
-        for(int i = 0 ; i  < rideData.size(); i ++) {
-            
+        for (int i = 0; i < rideData.size(); i++) {
+
             String rideId = rideData.get(i).getId();
-            int peopleInLine =  lineData.get(rideId);
+            int peopleInLine = lineData.get(rideId);
             double waitTime = CalculateWaitTime(rideId, peopleInLine);
             int tolerance = GetTolerance(rideId);
-            String statusLabel = GetStatusString(tolerance, waitTime); 
-            WaitTimeOutput output = new WaitTimeOutput(rideId, peopleInLine, waitTime,statusLabel );
+            String statusLabel = GetStatusString(tolerance, waitTime);
+            WaitTimeOutput output = new WaitTimeOutput(rideId, peopleInLine, waitTime, statusLabel);
             result.add(output);
         }
         CsvDataWriter writer = new CsvDataWriter();
         writer.writePredictionData(result);
     }
-    
+
     public static void ConsoleMode() {
         LoadInMemoryDB();
         System.out.println("Console Mode started");
         String rideid = "";
         int peopleinline = 0;
         boolean validInput = false;
-        while(true) {
-            
+        while (true) {
+
             Scanner scann = new Scanner(System.in);
             while (true) {
-                
+
                 System.out.println("Enter the ride id:");
                 rideid = scann.nextLine();
-    
+
                 if ("STOP".equals(rideid)) {
                     System.out.println("Thanks for using NovaQueue");
                     System.exit(0);
@@ -76,66 +75,68 @@ public class NovaQueue {
                 if (!rideType.containsKey(rideid)) {
                     System.out.println("No ride exists for ride id - " + rideid);
                     continue;
-                }else {
+                }
+                else {
                     break;
                 }
             }
-            while(!validInput) {
+            while (!validInput) {
                 System.out.println("Enter number of people currently in line: ");
-                
-                if(scann.hasNextInt()) {
+
+                if (scann.hasNextInt()) {
                     peopleinline = scann.nextInt();
-                    if(peopleinline < 0 || peopleinline > 5000) {
+                    if (peopleinline < 0 || peopleinline > 5000) {
                         System.out.println("Enter Valid Input between 0 and 5000");
-                        
-                    }else {
-                       
-                       validInput = true;
+
                     }
-                }else {
+                    else {
+
+                        validInput = true;
+                    }
+                }
+                else {
                     System.out.println("Invalid input");
                     scann.next();
                 }
-                
+
             }
-                
-                double waitingTime = CalculateWaitTime(rideid, peopleinline);
-                int tolerance =  GetTolerance(rideid);
-                String statusLabel = GetStatusString(tolerance, waitingTime);
-                
-    
-                System.out.println(rideName.get(rideid) + " has " + peopleinline + " people in line and the wait time is "
-                        + String.format("%.2f", waitingTime) + " minutes - " + statusLabel);
-                
-                validInput = false;
-                
+
+            double waitingTime = CalculateWaitTime(rideid, peopleinline);
+            int tolerance = GetTolerance(rideid);
+            String statusLabel = GetStatusString(tolerance, waitingTime);
+
+            System.out.println(rideName.get(rideid) + " has " + peopleinline + " people in line and the wait time is "
+                    + String.format("%.2f", waitingTime) + " minutes - " + statusLabel);
+
+            validInput = false;
+
         }
     }
-    
+
     public static int GetTolerance(String rideId) {
         return (int) (rideType.get(rideId).waitTimeTolerance.getSeconds() / 60);
     }
-    
+
     public static double CalculateWaitTime(String rideId, int peopleInLine) {
         double dispatchTimeInMinutes = rideInfo.get(rideId)[0] / 60.0;
-        
+
         int ridersPerDispatch = rideInfo.get(rideId)[1];
-        
-        double pwt =  Math.round((dispatchTimeInMinutes / ridersPerDispatch) * peopleInLine * 10.0) / 10.0;
-        
-       return pwt;
+
+        double pwt = Math.round((dispatchTimeInMinutes / ridersPerDispatch) * peopleInLine * 10.0) / 10.0;
+
+        return pwt;
     }
-    
+
     public static String GetStatusString(int tolerance, double pwt) {
         String statusLabel = "";
-        
+
         if (pwt <= tolerance) {
             statusLabel = "Normal";
         }
         if (pwt < 0.5 * tolerance) {
             statusLabel = "Below Normal";
         }
-        
+
         if (pwt > tolerance) {
             statusLabel = "Above Normal";
         }
@@ -145,20 +146,18 @@ public class NovaQueue {
         return statusLabel;
     }
 
-        
-
     public static void ClearInMemoryDB() {
         rideType.clear();
         rideInfo.clear();
         rideName.clear();
     }
-    
+
     public static void LoadInMemoryDBForBatchMode(List<Ride> rideData) {
-        for(int i = 0 ; i < rideData.size(); i++) {
+        for (int i = 0; i < rideData.size(); i++) {
             Ride r = rideData.get(i);
-            if(!rideType.containsKey(r.getId())) {
+            if (!rideType.containsKey(r.getId())) {
                 rideType.put(r.getId(), r.getRideType());
-                rideInfo.put(r.getId(), new int[] {(int) r.getDispatchTime(), (int) r.getRidersPerDispatch()});
+                rideInfo.put(r.getId(), new int[] { (int) r.getDispatchTime(), (int) r.getRidersPerDispatch() });
                 rideName.put(r.getId(), r.getName());
             }
         }
