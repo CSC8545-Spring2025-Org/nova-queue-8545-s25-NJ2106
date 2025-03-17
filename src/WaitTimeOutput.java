@@ -3,14 +3,14 @@ public class WaitTimeOutput {
     private String rideId;
     private long peopleInLineCurrently;
     private double predictedWaitTimeInMinutes;
-    private String StatusString;
+    private String statusString;
 
     public WaitTimeOutput(String rideId, long peopleInLineCurrently, double predictedWaitTimeInMinutes,
-            String StatusString) {
+            String statusString) {
         this.rideId = rideId;
         this.peopleInLineCurrently = peopleInLineCurrently;
         this.predictedWaitTimeInMinutes = predictedWaitTimeInMinutes;
-        this.StatusString = StatusString;
+        this.statusString = statusString;
     }
 
     public String getrideId() {
@@ -29,7 +29,7 @@ public class WaitTimeOutput {
     }
 
     public String getStatusString() {
-        return this.StatusString;
+        return this.statusString;
 
     }
 }

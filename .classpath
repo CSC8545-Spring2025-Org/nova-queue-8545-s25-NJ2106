@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="C:/Users/NIHARIKA/Downloads/github-repos/novaqueue-data-8545-s25/lib/commons-codec-1.17.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/NIHARIKA/Downloads/github-repos/novaqueue-data-8545-s25/lib/commons-csv-1.13.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/NIHARIKA/Downloads/github-repos/novaqueue-data-8545-s25/lib/commons-io-2.18.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
