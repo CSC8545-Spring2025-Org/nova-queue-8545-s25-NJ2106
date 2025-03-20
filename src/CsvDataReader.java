@@ -34,11 +34,11 @@ public class CsvDataReader {
         loader.readRideData();
     }
 
-    public List<Ride> readRideData() {
+    public HashMap<String,Ride> readRideData() {
         BOMInputStream bomInputStream = null;
         Reader reader = null;
         CSVParser csvParser = null;
-        List<Ride> result = new ArrayList<>();
+        HashMap<String,Ride> result = new HashMap<String, Ride>();
         try {
 
             bomInputStream = BOMInputStream.builder().setPath(Paths.get("src/resources/ride-data.csv"))
@@ -54,13 +54,16 @@ public class CsvDataReader {
             for (CSVRecord record : csvParser) {
                 Ride ride = new Ride();
                 ride.setId(record.get(RideDataHeaders.rideId));
+                String id = ride.getId();
                 ride.setName(record.get(RideDataHeaders.rideName));
                 ride.setRideType(RideType.valueOf(record.get(RideDataHeaders.rideType)));
                 // tip: you'll need to format the time to appear in rounded minutes in your project
                 ride.setDispatchTime(Long.valueOf(record.get(RideDataHeaders.dispatchTimeInSeconds)));
                 ride.setRidersPerDispatch(Long.valueOf(record.get(RideDataHeaders.ridersPerDispatch)));
                 System.out.println(ride);
-                result.add(ride);
+                if(!result.containsKey(id)) {
+                	result.put(id, ride);
+                }
 
             }
         }

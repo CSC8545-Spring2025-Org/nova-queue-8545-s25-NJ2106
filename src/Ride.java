@@ -10,6 +10,7 @@ public class Ride {
 
     public Ride() {
     }
+    
 
     public Ride(String id, String name, RideType rideType, long dispatchTime, long ridersPerDispatch) {
         super();

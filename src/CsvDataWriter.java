@@ -13,7 +13,7 @@ public class CsvDataWriter {
     }
 
     public static void main(String[] args) {
-        CsvDataWriter writer = new CsvDataWriter();
+      //  CsvDataWriter writer = new CsvDataWriter();
         // writer.writePredictionData();
     }
 
