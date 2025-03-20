@@ -41,6 +41,10 @@ public class BatchMode extends Mode{
 		String status = GetStatusString(tolerance, wt);
 		outputs.add(new WaitTimeOutput(id, peopleInLine, wt, status));
 	}
+	
+	public List<WaitTimeOutput> GetResult(){
+		return this.outputs;
+	}
 
 	
 }

@@ -59,7 +59,7 @@ public class NovaQueue {
 
                 if (scann.hasNextInt()) {
                     peopleinline = scann.nextInt();
-                    if (peopleinline < 0 || peopleinline > peopleInLine) {
+                    if (!cm.IsValidInput(peopleinline)) {
                         System.out.println("Enter Valid Input between 0 and 5000");
 
                     }
@@ -75,6 +75,7 @@ public class NovaQueue {
                 }
             }
             cm.ProcessOutPut(rideid, peopleinline);
+            System.out.println(cm.GetConsoleText());
             validInput = false;
 
         }

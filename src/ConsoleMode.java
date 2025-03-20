@@ -2,6 +2,8 @@ import java.util.HashMap;
 
 public class ConsoleMode extends Mode {
 	
+	private String consoleText = null;
+	private final int PeopleInLine = 5000;
 	public ConsoleMode() {
 		loadData();
 	}
@@ -32,8 +34,18 @@ public class ConsoleMode extends Mode {
 	}
 	
 	public void ProcessOutPut(String name, int peopleInLine, double waitTime, String statusString) {
-		System.out.println(name + " has " + peopleInLine + " people in line and the wait time is "
-                + String.format("%.2f", waitTime) + " minutes - " + statusString);
+		consoleText = name + " has " + peopleInLine + " people in line and the wait time is "
+                + String.format("%.2f", waitTime) + " minutes - " + statusString;
+	}
+	
+	public String GetConsoleText() {
+		return consoleText;
+	}
+	
+	public boolean IsValidInput(int peopleInLine) {
+		
+		return peopleInLine > 0 && peopleInLine <= PeopleInLine;
+			
 	}
 
 	
